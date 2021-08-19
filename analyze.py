@@ -41,8 +41,6 @@ def most_frequent(data, col, how_many,*focus):
         result = result + word + " " + str(count) + "\n"
     return(result)
 
-#print(most_frequent(sys.argv[1], "LEMMA", 10))
-
 def read_text(inp):
     id = None
     text = []
@@ -82,7 +80,7 @@ def extract_register(register, data):
     print("Wrote", register, "texts to a file!")
     return(file_out)
 
-extract_register("narrative", sys.argv[1])
+
 def print_text(data, col):
     cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] #the columns of the conllu format
     to_return = []
