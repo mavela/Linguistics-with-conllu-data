@@ -81,13 +81,19 @@ def extract_register(register, data):
     return(file_out)
 
 
-def print_text(data, col):
+def print_text(data, col, max):
     cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] #the columns of the conllu format
     to_return = []
+    text_count = 0
     for reg, text in read_text(open_f(data)):
+        text_count +=1
+        if text_count > max:
+            break
+        else:
             words = (word_line[cols.index(col)] for word_line in text)
-            print(" ".join(words))
-    return(to_return)
+            to_return.append(" ".join(words))
+    return("\n\n".join(to_return))
+
 
 
         
