@@ -95,5 +95,56 @@ def print_text(data, col, max):
     return("\n\n".join(to_return))
 
 
+def count_specific_word(word, data, col):
+    cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"]
+    data=open_f(data)
+    counter = 0
+    result = ""
+    myc = Counter()
+    for line in data:
+        if not line or not line[0].isdigit(): # skip metadata and empty lines
+                continue
+        else:
+            line=line.strip().split("\t")
+            if line[2] == word:
+                    counter +=1
+                    myc[line[cols.index(col)]] +=1
+            else:
+                    continue
+    for w, count in myc.most_common():
+        result = result + w + " " + str(count) + "\n"
+    return("Total counts for " + word + ": " + str(counter)+"\n" + "The most frequent " + " " +  col + ":" + "\n" +result)
 
-        
+
+def count_word_context(word, data):
+    data=open_f(data)
+    before_window = []
+    final_win = []
+    after_counter = 0
+    result = ""
+    for line in data:
+        line=line.strip().split("\t")
+        if not line or not line[0].isdigit(): # skip metadata and empty lines
+            continue
+        elif line[3] == "PUNCT":
+            continue
+        else:
+            after_counter +=1
+            before_window.append(line[1])
+            if after_counter <=3:
+                if len(final_win) >= 3:
+                    final_win.append(line[1])
+            elif line[1] == word:
+                before_window.remove(word)
+                final_win= final_win + before_window[-3:]
+                before_window = []
+                after_counter = 0
+            else:
+                continue
+    for w, c in Counter(final_win).most_common(20):
+        result = result + w + " " + str(c) + "\n"
+    return(result)
+
+                   
+
+ 
