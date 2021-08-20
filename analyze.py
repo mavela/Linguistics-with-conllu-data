@@ -72,7 +72,6 @@ def extract_register(register, data):
             file_out.write("# predicted register: " + register + "\n")
             for line in text:
                 if line[0] == "1":
-                    print("\n")
                     file_out.write("\n")
                 file_out.write("\t".join(line)+"\n")
             file_out.write("\n")
