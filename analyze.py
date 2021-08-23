@@ -110,18 +110,19 @@ def count_specific_lemma(word, data, col):
                     myc[line[cols.index(col)]] +=1
             else:
                     continue
-    for w, count in myc.most_common():
+    for w, count in myc.most_common(15):
         result = result + w + " " + str(count) + "\n"
     return("Total counts for the lemma " + word + ": " + str(counter)+"\n" + "The most frequent " + " " +  col + ":" + "\n" +result)
 
 #print(count_specific_lemma("koira", sys.argv[1], "DEPREL"))
 
-def count_word_context(word, data):
+def count_word_context(word, column, data):
     data=open_f(data)
     before_window = []
     final_win = []
     after_counter = 0
     result = ""
+    cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] 
     for line in data:
         line=line.strip().split("\t")
         if not line or not line[0].isdigit(): # skip metadata and empty lines
@@ -130,12 +131,12 @@ def count_word_context(word, data):
             continue
         else:
             after_counter +=1
-            before_window.append(line[1])
+            before_window.append(line[cols.index(column)])
             if after_counter <=3:
                 if len(final_win) >= 3:
-                    final_win.append(line[1])
+                    final_win.append(line[cols.index(column)])
             elif line[1] == word:
-                before_window.remove(word)
+                before_window.remove(line[cols.index(column)])
                 final_win= final_win + before_window[-3:]
                 before_window = []
                 after_counter = 0
@@ -145,6 +146,7 @@ def count_word_context(word, data):
         result = result + w + " " + str(c) + "\n"
     return(result)
 
+#print(count_word_context("koira", "UPOS", sys.argv[1]))
 
 # what are the most frequent tags (column, eg lemmas) for the searched_deprel?
 def count_deprel(column, searched_deprel, data):#, col):
@@ -169,4 +171,4 @@ def count_deprel(column, searched_deprel, data):#, col):
 
 
 
- 
+#print(count_deprel("LEMMA", "nsubj", sys.argv[1])) 
