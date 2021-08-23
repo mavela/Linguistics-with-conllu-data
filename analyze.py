@@ -94,7 +94,7 @@ def print_text(data, col, max):
     return("\n\n".join(to_return))
 
 
-def count_specific_word(word, data, col):
+def count_specific_lemma(word, data, col):
     cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"]
     data=open_f(data)
     counter = 0
@@ -112,8 +112,9 @@ def count_specific_word(word, data, col):
                     continue
     for w, count in myc.most_common():
         result = result + w + " " + str(count) + "\n"
-    return("Total counts for " + word + ": " + str(counter)+"\n" + "The most frequent " + " " +  col + ":" + "\n" +result)
+    return("Total counts for the lemma " + word + ": " + str(counter)+"\n" + "The most frequent " + " " +  col + ":" + "\n" +result)
 
+#print(count_specific_lemma("koira", sys.argv[1], "DEPREL"))
 
 def count_word_context(word, data):
     data=open_f(data)
@@ -144,6 +145,28 @@ def count_word_context(word, data):
         result = result + w + " " + str(c) + "\n"
     return(result)
 
-                   
+
+# what are the most frequent tags (column, eg lemmas) for the searched_deprel?
+def count_deprel(column, searched_deprel, data):#, col):
+    cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"]
+    data=open_f(data)
+    counter = 0
+    result = ""
+    myc = Counter()
+    for line in data:
+        if not line or not line[0].isdigit(): # skip metadata and empty lines
+                continue
+        else:
+            line=line.strip().split("\t")
+            if line[cols.index("DEPREL")] == searched_deprel:
+                    counter +=1
+                    myc[line[cols.index(column)]] +=1
+            else:
+                    continue
+    for w, count in myc.most_common(20):
+        result = result + w + " " + str(count) + "\n"
+    return("Total counts for the the dependency relation "  + searched_deprel + ": " + str(counter)+"\n" + "The most frequent " + " " +  column + ":" + "\n" +result)
+
+
 
  
