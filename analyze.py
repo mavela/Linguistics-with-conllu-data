@@ -217,8 +217,6 @@ def count_word_context(word, column, data):
         result = result + w + " " + str(c) + "\n"
     return(result)
 
-#print(count_word_context("koira", "LEMMA", sys.argv[1]))
-
 # what are the most frequent tags (column, eg lemmas) for the searched_deprel?
 def count_deprel(column, searched_deprel, data):#, col):
     cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"]
@@ -291,7 +289,7 @@ def save_text_format(file,col):
     return
 
 
-save_text_format(sys.argv[1], "LEMMA")
+#save_text_format(sys.argv[1], "LEMMA")
 
 
 
