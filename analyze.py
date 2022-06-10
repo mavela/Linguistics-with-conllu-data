@@ -11,9 +11,9 @@ def read_text_ext(inp):
                 if register != None:
                     yield(register, text)
                     text = []
-                    register=line#.split(":")[1].strip()
+                    register=line
                 elif register == None:
-                    register=line#.split(":")[1].strip()
+                    register=line
             elif not line.startswith("#"):
                 if len(line)== 0:
                     continue
@@ -260,57 +260,38 @@ def read_conllu(f):
     else:
         if sent:
             yield comment, sent
-            
-#for comm, sent in read_conllu(open(sys.argv[1], "r")):
-   # print("s", sent)
-#    if "you" in [token[FORM].lower() for token in sent]:
-#        print("JEE")
-#        print(" ".join(token[FORM] for token in sent))
-#    if "ADJ" in [token[UPOS] for token in sent]:
-#        print("JEE2")
-#        print(" ".join(token[FORM] for token in sent))
 
 
-def print_kwic_lemma(data, target_word, col, ret, max):
+def print_text_label(data, col, max): #this is the same as print_text but it adds the register label to each line 
     cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] #the columns of the conllu format
-    to_return_text = []
-    to_return_feats = []
-    to_return_ret = []
     to_return = []
     text_count = 0
-    for reg, text in read_text(open_f(data)):
+    datan = data.split("/")[1].split(".")[0]
+    for reg, text in read_text_ext(open_f(data)):
+      #  print("2", text)
         text_count +=1
         if text_count > max:
             break
-#        if target_word not in [word_line(cols.index(col)) for word_line in text]:
- #           continue
         else:
-            tags = []
-            for word_line in text:
-                try:
-                    to_return_text.append(word_line[1])
-                    to_return_feats.append(word_line[cols.index(col)])
-                    to_return_ret.append(word_line[cols.index(ret)])
-                except:
-                    continue
-     #               print("FAIL", word_line)
-        if target_word not in to_return_feats:
-            continue
-        else:
-#            print("XXX")
-#            print(" ".join(to_return_text))
-#            try: 
- #               words = [word_line[2] for word_line in text]
-     #       except:
-  #              print("FAIL")
-   #             for w in text:
-    #                print(w)
-          #  if target_word in set(words):
-           #     tags = [word_line[cols.index(col)] for word_line in text]
-        
-            to_return.append(" ".join(to_return_text))
-            to_return.append(" ".join(to_return_feats))
-    print(to_return)
-    return("\n\n".join(to_return_text))
+            words = (word_line[cols.index(col)] for word_line in text)
+            to_line = datan + "\t" + " ".join(words)
+            to_return.append(to_line)
+#            to_return.append(" ".join(words))
+    return("\n".join(to_return))
 
-#print(print_kwic_lemma(sys.argv[1], "without", "FORM", "FORM", 3))
+
+            
+def save_text_format(file,col):
+    max = 10000
+    text_count = 0
+    to_return = []
+    outf_name = file.replace(".conllu", ".feats")
+    out_f = open(outf_name,"w")
+    out_f.write(print_text_label(file,col,max))
+    return
+
+
+save_text_format(sys.argv[1], "LEMMA")
+
+
+
