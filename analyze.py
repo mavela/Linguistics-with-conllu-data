@@ -110,7 +110,29 @@ def read_text(inp):
             else:
                     text.append(line.split("\t"))
     yield(register, text)
-                       
+
+def read_textv2(inp):
+    register = None
+    text = []
+    for line in inp:
+            line=line.strip()
+            if len(line) < 1:
+                continue
+            if line.startswith("#"):
+                if line.startswith("###C:DOCSTART"):
+                    #print("Docstart")
+                    if register != None:
+                        #print("yielding")
+                        yield(text)
+                        text = []
+                        register = line
+                    elif register == None:
+                        register=line
+                    else:
+                        continue
+            else:
+                    text.append(line.split("\t"))
+    yield(text)    
     
 def extract_register(register, data):
     file_out = open(register + "_ext" + ".conllu", "w")
@@ -141,6 +163,23 @@ def print_text(data, col, max):
             words = (word_line[cols.index(col)] for word_line in text)
             to_return.append(" ".join(words))
     return("\n".join(to_return))
+
+
+def print_textv2(data, col, max):
+    cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] #the columns of the conllu format            
+    to_return = []
+    text_count = 0
+    for text in read_textv2(open_f(data)):
+        #print("2", text)
+        #print()
+        text_count +=1
+        if text_count > max:
+            break
+        else:
+            words = (word_line[cols.index(col)] for word_line in text)
+            to_return.append(" ".join(words))
+    return("\n".join(to_return))
+
 
 def print_text_filt(data, col, max, filt):
     cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] #the columns of the conllu format

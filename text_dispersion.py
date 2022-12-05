@@ -1,3 +1,5 @@
+#reference corpus needs to be in the same directory as the target corpus
+
 import glob
 import re
 import math
@@ -7,7 +9,9 @@ from collections import Counter
 from common import load_key_data,text_count,word_count,total_wc
 import statistics
 from statistics import mean
-from analyze import print_text
+from analyze import print_textv2
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL)
 
 target_reg = sys.argv[1] # give target register as an argument (e.g. NA or NA_ne)
 ref_reg = sys.argv[2]
@@ -26,28 +30,41 @@ total_R = 0
 words_total_T = 0 # number of words in a corpus
 words_total_R = 0
 
+#print(glob.glob("data/*"))
+
 for file in glob.glob("data/*"): # read all files from path -> run from corpus directory
     word_list_T = []
     word_list_R = []
+    #print(file)
+    print("XYV",sys.argv[1:])
     if file in sys.argv[1:]:
+            print("F", file)
             print("Reading a conllu file named", file, flush=True)
-            f = print_text(file, sys.argv[3], 1000000)
+            f = print_textv2(file, sys.argv[3], 1000000)
             f=f.split("\n")
     else:
         continue
 
 #Count the texts in the target and reference corpora
     for line in f:
+        #print("XXX",line)
+        #print()
         line=line.strip()
+        #print("JOTAIN",sys.argv[1])
         if sys.argv[1]  == file:
+            print("target")
             total_T += 1
         else:
             total_R += 1
+            #print("reference")
         line = line.lower()
         line = re.sub('[^\w|\s|\'|\-]', '', line)
         words=line.split( )
+        #print("WWW",words)
+        #print()
 #If the file comes from the target register(s) then add to target word count, add all words to file word list. If the file comes from any other register, add to reference corpus dictionary
         if re.match(sys.argv[1], file):
+            print("target")
             word_list_T.extend(words)
 #            print("word_list", word_list_T)
             words_total_T += len(words)
@@ -103,7 +120,12 @@ for i in (text_count_T):
             cE_R = words_total_R * (cfreq_T + cfreq_R) / (words_total_T + words_total_R)
             cG2 = 2 * (cfreq_T * math.log(cfreq_T / cE_T))
             keyness[i] = (G2, cG2)
-
+            
+print("Total_T:",total_T)
+print("Total_R:",total_R)
+print("words_total_t:",words_total_T) # number of words in a corpus                                                             
+print("words_total_r:",words_total_R)
+            
 #Write out the words and keyness (log-likelihood) values for each word
 count = 0
 target_100 = []
