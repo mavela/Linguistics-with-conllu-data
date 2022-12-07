@@ -35,28 +35,28 @@ words_total_R = 0
 for file in glob.glob("data/*"): # read all files from path -> run from corpus directory
     word_list_T = []
     word_list_R = []
-    #print(file)
-    print("XYV",sys.argv[1:])
+    print("in folder", file)
+    print("argvs",sys.argv[1:])
     if file in sys.argv[1:]:
-            print("F", file)
+            print("match", file)
             print("Reading a conllu file named", file, flush=True)
-            f = print_textv2(file, sys.argv[3], 1000000)
+            f = print_textv2(file, "FORM", 1000000)
             f=f.split("\n")
     else:
         continue
 
 #Count the texts in the target and reference corpora
     for line in f:
-        #print("XXX",line)
+#        print("XXX",line)
         #print()
         line=line.strip()
         #print("JOTAIN",sys.argv[1])
         if sys.argv[1]  == file:
-            print("target")
+ #           print("file is target")
             total_T += 1
         else:
             total_R += 1
-            #print("reference")
+#            print("reference")
         line = line.lower()
         line = re.sub('[^\w|\s|\'|\-]', '', line)
         words=line.split( )
@@ -64,7 +64,7 @@ for file in glob.glob("data/*"): # read all files from path -> run from corpus d
         #print()
 #If the file comes from the target register(s) then add to target word count, add all words to file word list. If the file comes from any other register, add to reference corpus dictionary
         if re.match(sys.argv[1], file):
-            print("target")
+#            print("target")
             word_list_T.extend(words)
 #            print("word_list", word_list_T)
             words_total_T += len(words)
