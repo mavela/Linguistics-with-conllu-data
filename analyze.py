@@ -331,7 +331,7 @@ def read_conllu(f):
 def most_frequent_filter2(data, col, how_many, *focus):
     cols = ["ID", "FORM", "LEMMA", "UPOS", "XPOS",
             "FEAT", "HEAD", "DEPREL", "DEPS", "MISC"]
-    skip_pos = {"PUNCT", "AUX", "ADP", "CCONJ", "DET", "PRON"}
+    skip_pos = {"PUNCT", "AUX", "ADP", "CCONJ", "DET", "PRON","PART"}
     my_counter = Counter()
     result = ""
     fl = open_f(data)
