@@ -92,6 +92,37 @@ def most_frequent(data, col, how_many,*focus):
         result = result + word + " " + str(count) + "\n"
     return(result)
 
+
+def most_frequent_filter(data, col, how_many,*focus):
+    cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] #the columns of the conllu format
+    my_counter = Counter()
+    result = "" # here is where we put the result
+    fl = open_f(data)
+    for line in fl:
+        line=line.strip()
+        if not line or not line[0].isdigit(): # skip metadata and empty lines
+                continue
+        else:
+                line=line.split("\t") # split to list
+                if line[cols.index("UPOS")] == "PUNCT": # let's ignore punctuation
+                        continue
+                 if line[cols.index("UPOS")] == "AUX": # let's ignore punctuation
+                        continue
+                 if line[cols.index("UPOS")] == "ADP": # let's ignore punctuation
+                        continue
+                 if line[cols.index("UPOS")] == "CCONJ": # let's ignore punctuation
+                        continue
+                 if line[cols.index("UPOS")] == "DET": # let's ignore punctuation
+                        continue
+                elif len(focus) == 0: # if 0, we take all, except for punctuation
+                    my_counter[line[cols.index(col)]] +=1
+                elif line[cols.index(col)] == "".join(focus): #if focus specifies a group we want to focus on, it is defined here
+                         my_counter[line[2]] +=1 #take lemmas
+    for word, count in my_counter.most_common(how_many):
+        result = result + word + " " + str(count) + "\n"
+    return(result)
+
+
 def read_text(inp):
     register = None
     text = []
