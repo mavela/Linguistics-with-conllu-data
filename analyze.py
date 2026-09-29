@@ -328,7 +328,31 @@ def read_conllu(f):
     else:
         if sent:
             yield comment, sent
-
+def most_frequent_filter2(data, col, how_many, *focus):
+    cols = ["ID", "FORM", "LEMMA", "UPOS", "XPOS",
+            "FEAT", "HEAD", "DEPREL", "DEPS", "MISC"]
+    skip_pos = {"PUNCT", "AUX", "ADP", "CCONJ", "DET", "PRON"}
+    my_counter = Counter()
+    result = ""
+    fl = open_f(data)
+    for line in fl:
+        line = line.strip()
+        # Skip metadata and empty lines
+        if not line or not line[0].isdigit():
+            continue
+        line = line.split("\t")
+        # Skip unwanted POS categories
+        if line[cols.index("UPOS")] in skip_pos:
+            continue
+        # No focus specified: count everything else
+        if len(focus) == 0:
+            my_counter[line[cols.index(col)]] += 1
+        # Focus specified
+        elif line[cols.index(col)] == "".join(focus):
+            my_counter[line[cols.index("LEMMA")]] += 1
+    for word, count in my_counter.most_common(how_many):
+        result += word + " " + str(count) + "\n"
+    return result
 
 def print_text_label(data, col, max): #this is the same as print_text but it adds the register label to each line 
     cols = ["ID","FORM","LEMMA","UPOS","XPOS","FEAT","HEAD","DEPREL","DEPS","MISC"] #the columns of the conllu format
